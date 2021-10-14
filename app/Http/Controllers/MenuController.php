@@ -95,6 +95,18 @@ class MenuController extends BaseController
      */
 
     public function getMenuItems() {
-        return Menus::with('children')->get();
+        $result= Menus::with('children')->get();
+        $childrens=[];
+
+        foreach( $result as $value){ 
+            foreach( $value['children'] as $val){
+               $newdata= Menus::with('children')->Where('parent_id','=',$val['id'])->get();
+                $val['children']= (object)($newdata);                
+            } 
+            array_push($childrens,$value); 
+        }
+      
+        
+      return $childrens;
     }
 }
